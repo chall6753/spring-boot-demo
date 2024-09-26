@@ -1,3 +1,6 @@
 def servicePipeline = load 'servicePipeline.groovy'
 
-servicePipeline()
+node(){
+    servicePipeline()
+}
+
