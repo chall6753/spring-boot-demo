@@ -9,7 +9,7 @@ def call(){
                 }
             }
 
-        }
+
 
         post {
             success {
@@ -20,6 +20,6 @@ def call(){
             }
         }
 
-
+}
 
 return this
