@@ -16,25 +16,12 @@ pipeline {
 
         stage('Build') {
             steps {
+                chmod +x gradlew
                 // Run Gradle build
                 sh './gradlew build'
             }
         }
 
-        stage('Test') {
-            steps {
-                // Run Gradle tests
-                sh './gradlew test'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                // Deploy the application (this could vary based on your setup)
-                echo 'Deploying the application...'
-                // Add deployment steps here
-            }
-        }
     }
 
     post {
