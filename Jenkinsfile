@@ -25,7 +25,7 @@
                                      }
                                      failure {
                                          echo 'Pipeline failed!'
-                                     }}
+                                     }
           }
 
     }
