@@ -1,20 +1,5 @@
 
 def call(){
-    pipeline {
-        agent any
-
-        environment {
-            // Set environment variables if needed
-            GRADLE_USER_HOME = "${WORKSPACE}/.gradle" // Optional
-        }
-
-        stages {
-            stage('Checkout') {
-                steps {
-                    // Checkout the code from the repository
-                    git url: 'https://github.com/chall6753/spring-boot-demo', branch: 'main'
-                }
-            }
 
             stage('Build') {
                 steps {
@@ -34,7 +19,7 @@ def call(){
                 echo 'Pipeline failed!'
             }
         }
-    }
-}
+
+
 
 return this
