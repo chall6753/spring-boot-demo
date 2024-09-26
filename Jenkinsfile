@@ -1,6 +1,6 @@
 
 node(){
-    def servicePipeline = load 'servicePipeline.groovy'
+    def servicePipeline = load './servicePipeline.groovy'
     servicePipeline()
 }
 
