@@ -36,26 +36,26 @@ pipeline {
             }
         }
 
-        stage('Authenticate with GCR') {
-            steps {
-                withCredentials([file(credentialsId: 'gcr-json-key', variable: 'GCR_KEYFILE')]) {
-                    // Authenticate Docker to GCR using the service account key
-                    sh '''
-                        gcloud auth activate-service-account --key-file=${GCR_KEYFILE}
-                        gcloud auth configure-docker --quiet
-                    '''
-                }
-            }
-        }
-
-        stage('Push Docker Image to GCR') {
-            steps {
-                script {
-                    // Push the Docker image to Google Container Registry
-                    sh "docker push ${IMAGE_TAG}"
-                }
-            }
-        }
+//         stage('Authenticate with GCR') {
+//             steps {
+//                 withCredentials([file(credentialsId: 'gcr-json-key', variable: 'GCR_KEYFILE')]) {
+//                     // Authenticate Docker to GCR using the service account key
+//                     sh '''
+//                         gcloud auth activate-service-account --key-file=${GCR_KEYFILE}
+//                         gcloud auth configure-docker --quiet
+//                     '''
+//                 }
+//             }
+//         }
+//
+//         stage('Push Docker Image to GCR') {
+//             steps {
+//                 script {
+//                     // Push the Docker image to Google Container Registry
+//                     sh "docker push ${IMAGE_TAG}"
+//                 }
+//             }
+//         }
     }
 
     post {
