@@ -29,14 +29,14 @@ pipeline {
             }
         }
 
-//         stage('Build Docker Image') {
-//             steps {
-//                 script {
-//                     // Build the Docker image
-//                     sh "sudo docker build -t ${IMAGE_TAG} ."
-//                 }
-//             }
-//         }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh "docker build -t ${IMAGE_TAG} ."
+                }
+            }
+        }
 
 //         stage('Authenticate with GCR') {
 //             steps {
