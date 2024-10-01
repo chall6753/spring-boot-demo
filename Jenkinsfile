@@ -8,12 +8,14 @@ pipeline {
         IMAGE_NAME = 'spring-boot-demo'
         IMAGE_TAG = "gcr.io/${GCP_PROJECT}/${IMAGE_NAME}:${env.BUILD_ID}"
     }
-
+    parameters {
+            string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branch to checkout')
+        }
     stages {
         stage('Checkout') {
             steps {
                 // Checkout the code from the repository
-                git url: 'https://github.com/chall6753/spring-boot-demo', branch: 'main'
+                git url: 'https://github.com/chall6753/spring-boot-demo', branch: "${params.BRANCH_NAME}"
             }
         }
 
@@ -31,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    sh "sudo docker build -t ${IMAGE_TAG} ."
+                    sh "docker build -t ${IMAGE_TAG} ."
                 }
             }
         }
