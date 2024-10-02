@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        GCP_PROJECT = 'propane-sphinx-367900'
+        IMAGE_NAME = 'spring-boot-demo'
+        GKE_CLUSTER = 'your-cluster-name'  // Replace with your actual GKE cluster name
+        GKE_ZONE = 'your-zone'             // Replace with your GKE zone
+        IMAGE_TAG = "gcr.io/${GCP_PROJECT}/${IMAGE_NAME}:${params.BUILD_ID}"
+    }
+
+    parameters {
+        string(name: 'BUILD_ID', defaultValue: '', description: 'Build ID or Image Tag to deploy (e.g., 123)')
+    }
+
+    stages {
+        stage('Authenticate with GKE') {
+            steps {
+                withCredentials([file(credentialsId: 'gcr-json-key', variable: 'GCR_KEYFILE')]) {
+                    sh '''
+                        gcloud auth activate-service-account --key-file=${GCR_KEYFILE}
+                        gcloud config set project ${GCP_PROJECT}
+                        gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE}
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to GKE') {
+            steps {
+                script {
+                    sh '''
+                        kubectl set image deployment/spring-boot-demo spring-boot-demo=${IMAGE_TAG} --record || kubectl create deployment spring-boot-demo --image=${IMAGE_TAG}
+                        kubectl expose deployment spring-boot-demo --type=LoadBalancer --port 80 --target-port 8080 || true
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment completed successfully!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
