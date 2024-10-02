@@ -38,6 +38,12 @@ pipeline {
             }
         }
 
+        stage('Verify gcloud') {
+            steps {
+                sh 'gcloud version'
+            }
+        }
+
         stage('Authenticate with GCR') {
             steps {
                 withCredentials([file(credentialsId: 'gcr-json-key', variable: 'GCR_KEYFILE')]) {
