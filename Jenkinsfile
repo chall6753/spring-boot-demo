@@ -56,14 +56,14 @@ pipeline {
             }
         }
 
-//         stage('Push Docker Image to GCR') {
-//             steps {
-//                 script {
-//                     // Push the Docker image to Google Container Registry
-//                     sh "docker push ${IMAGE_TAG}"
-//                 }
-//             }
-//         }
+        stage('Push Docker Image to GCR') {
+            steps {
+                script {
+                    // Push the Docker image to Google Container Registry
+                    sh "docker push ${IMAGE_TAG}"
+                }
+            }
+        }
     }
 
     post {
