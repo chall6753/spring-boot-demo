@@ -36,9 +36,9 @@ pipeline {
                         echo "Tag ${params.NEW_TAG} added to image with digest ${params.IMAGE_DIGEST}"
                     } else if (params.ACTION == 'REMOVE') {
                         // Remove a tag from the image
-                        sh '''#!/bin/bash
+                        sh """
                             gcloud container images untag ${GCR_IMAGE}:${params.NEW_TAG} --quiet
-                        '''
+                        """
                         echo "Tag ${params.NEW_TAG} removed from image."
                     }
                 }
