@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'IMAGE_DIGEST', defaultValue: '', description: 'Digest of the image to tag (e.g., sha256:abcd1234)')
+        string(name: 'NEW_TAG', defaultValue: '', description: 'The new tag to add (e.g., latest, v1.0.0)')
+        choice(name: 'ACTION', choices: ['ADD', 'REMOVE'], description: 'Add or Remove tag from image')
+    }
+
+    environment {
+        GCP_PROJECT = 'propane-sphinx-367900'
+        IMAGE_NAME = 'spring-boot-demo'
+        GCR_IMAGE = "gcr.io/${GCP_PROJECT}/${IMAGE_NAME}"
+    }
+
+    stages {
+        stage('Authenticate with GCR') {
+            steps {
+                withCredentials([file(credentialsId: 'gcr-json-key', variable: 'GCR_KEYFILE')]) {
+                    sh '''
+                        gcloud auth activate-service-account --key-file=${GCR_KEYFILE}
+                        gcloud auth configure-docker --quiet
+                    '''
+                }
+            }
+        }
+
+        stage('Manage Image Tags in GCR') {
+            steps {
+                script {
+                    if (params.ACTION == 'ADD') {
+                        // Add a new tag to the image
+                        sh '''
+                            gcloud container images add-tag ${GCR_IMAGE}@${params.IMAGE_DIGEST} ${GCR_IMAGE}:${params.NEW_TAG} --quiet
+                        '''
+                        echo "Tag ${params.NEW_TAG} added to image with digest ${params.IMAGE_DIGEST}"
+                    } else if (params.ACTION == 'REMOVE') {
+                        // Remove a tag from the image
+                        sh '''
+                            gcloud container images untag ${GCR_IMAGE}:${params.NEW_TAG} --quiet
+                        '''
+                        echo "Tag ${params.NEW_TAG} removed from image."
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Operation completed successfully!"
+        }
+        failure {
+            echo "Operation failed!"
+        }
+    }
+}
