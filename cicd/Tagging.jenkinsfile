@@ -52,16 +52,16 @@ stages {
                 steps {
                     script {
                         if (params.ACTION == 'ADD') {
-                            sh '''
+                            sh """
                             git tag ${params.NEW_TAG}
                             git push origin ${params.NEW_TAG}
-                        '''
+                        """
                             echo "Tag ${params.NEW_TAG} added and pushed to Bitbucket."
                         } else if (params.ACTION == 'REMOVE') {
-                            sh '''
+                            sh """
                             git tag -d ${params.NEW_TAG}
                             git push origin :refs/tags/${params.NEW_TAG}
-                        '''
+                        """
                             echo "Tag ${params.NEW_TAG} removed from Bitbucket."
                         }
                     }
