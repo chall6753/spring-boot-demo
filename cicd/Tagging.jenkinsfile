@@ -54,6 +54,7 @@ stages {
                         if (params.ACTION == 'ADD') {
                             sh """
                             git tag ${params.NEW_TAG}
+                            git remote set-url origin git@github.com:chall7653/spring-boot-demo.git
                             git push origin ${params.NEW_TAG}
                         """
                             echo "Tag ${params.NEW_TAG} added and pushed to Bitbucket."
