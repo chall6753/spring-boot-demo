@@ -50,25 +50,24 @@ stages {
             }
             stage('Update bitbucket tags') {
                 steps {
-                    script {
-                        if (params.ACTION == 'ADD') {
-                            sh """
-                             mkdir -p ~/.ssh
-                            # Add GitHub to known_hosts to avoid host key verification failure
-                            ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-                            git tag ${params.NEW_TAG}
-                            git remote set-url origin git@github.com:chall6753/spring-boot-demo.git
-                            git push origin ${params.NEW_TAG}
-                        """
-                            echo "Tag ${params.NEW_TAG} added and pushed to Bitbucket."
-                        } else if (params.ACTION == 'REMOVE') {
-                            sh """
-                            git tag -d ${params.NEW_TAG}
-                            git push origin :refs/tags/${params.NEW_TAG}
-                        """
-                            echo "Tag ${params.NEW_TAG} removed from Bitbucket."
-                        }
-                    }
+                    withCredentials([sshUserPrivateKey(credentialsId: 'github-ssh', keyFileVariable: 'SSH_KEY')]) {
+                                            sh """
+                                                # Ensure the .ssh directory exists
+                                                mkdir -p ~/.ssh
+
+                                                # Add GitHub's SSH key to known_hosts to avoid host key verification failure
+                                                ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
+                                                # Start the SSH agent and add the SSH key
+                                                eval `ssh-agent -s`
+                                                ssh-add ${SSH_KEY}
+
+                                                # Perform git operations
+                                                git tag ${NEW_TAG}
+                                                git remote set-url origin git@github.com:chall6753/spring-boot-demo.git
+                                                git push origin ${NEW_TAG}
+                                            """
+                                        }
                 }
 
             }
